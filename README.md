@@ -2,12 +2,13 @@
 
 把 Wallpaper Engine 的 `.mpkg` 封包解包，直接提取出里面的 `wallpaper.mp4` 视频文件。
 
-纯 Python 标准库实现，**不需要安装任何第三方依赖**。
+已封装为免安装的 Windows 可执行文件（`mpkg2mp4.exe`），**无需安装 Python**；
+源码仅使用 Python 标准库，无第三方依赖。
 
 ## 背景
 
-Wallpaper Engine 创意工坊的壁纸下载后是 `.pkg` / `.mpkg` 封包，文件头是 `PKGM0014`。
-它并不是一种视频格式，而是一个自定义容器：里面装着 `wallpaper.mp4`（视频本体）、
+Wallpaper Engine 的 `.mpkg` 封包，文件头是 `PKGM0014`。它并不是一种视频格式，
+而是一个自定义容器：里面装着 `wallpaper.mp4`（视频本体）、
 `project.json`、`scene.json`（壁纸配置）和 `preview.gif`（预览图）。
 
 所以"转成 mp4"本质上不是转码，而是**把封包里的 mp4 提取出来**。
@@ -29,12 +30,12 @@ Wallpaper Engine 创意工坊的壁纸下载后是 `.pkg` / `.mpkg` 封包，文
 
 ### 方式一：拖拽（Windows）
 
-1. 双击运行 `run.bat`。
+1. 双击运行 `run.bat`（会自动调用同目录下的 `mpkg2mp4.exe`，无需安装 Python）。
 2. 窗口会出现 `mpkg path:` 输入提示，把 `.mpkg` 文件直接拖进窗口，回车。
 3. 提取完成后可以继续拖入下一个文件；输入 `exit` 回车即可退出。
 4. 提取结果输出到封包旁边的 `<封包名>_extracted` 文件夹。
 
-也可以把 `.mpkg` 文件直接拖到 `run.bat` 图标上，处理完一个后自动退出。
+也可以把 `.mpkg` 文件直接拖到 `run.bat` 或 `mpkg2mp4.exe` 图标上，处理完一个后自动退出。
 
 ### 方式二：命令行
 
@@ -63,8 +64,17 @@ python extract.py "D:\pythonitems\3590728775.mpkg" "D:\output"
 
 ## 环境要求
 
-- Python 3.8+（仅使用标准库）
-- Windows / macOS / Linux 均可运行；`run.bat` 仅适用于 Windows
+- Windows：无需安装 Python，直接使用附带的 `mpkg2mp4.exe`
+- 想从源码运行时需要 Python 3.8+（仅使用标准库），Windows / macOS / Linux 均可
+
+### 从源码构建 exe（可选）
+
+```bat
+pip install pyinstaller
+pyinstaller --onefile --console --name mpkg2mp4 extract.py
+```
+
+生成的 `dist\mpkg2mp4.exe` 即为免安装版本。
 
 ## 常见问题
 

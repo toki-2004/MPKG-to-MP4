@@ -1,3 +1,6 @@
 extracted_*/
 __pycache__/
 *.pyc
+build/
+dist/
+*.spec
