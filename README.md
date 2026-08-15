@@ -35,10 +35,20 @@ Wallpaper Engine 创意工坊的壁纸下载后是 `.pkg` / `.mpkg` 封包，文
 python extract.py "D:\path\to\package.mpkg"
 ```
 
-也可以指定输出目录：
+其中 `"D:\path\to\package.mpkg"` 只是**示例路径**，需要替换成你自己的 `.mpkg` 文件的
+实际位置。例如你的文件在 `D:\pythonitems\3590728775.mpkg`，就应运行：
 
 ```bat
-python extract.py "D:\path\to\package.mpkg" "D:\output"
+python extract.py "D:\pythonitems\3590728775.mpkg"
+```
+
+不知道完整路径的话，可以在文件资源管理器中找到该 `.mpkg` 文件，按住 Shift 键
+右键点击它，选择“复制为路径”，再把复制出来的内容粘贴到命令里即可。
+
+也可以指定输出目录（最后一个参数是输出位置，不填则默认输出到封包旁边）：
+
+```bat
+python extract.py "D:\pythonitems\3590728775.mpkg" "D:\output"
 ```
 
 提取后，输出目录里除了原始文件（`wallpaper.mp4`、`project.json`、`scene.json`、
