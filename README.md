@@ -2,7 +2,7 @@
 
 把 Wallpaper Engine 的 `.mpkg` 封包解包，直接提取出里面的 `wallpaper.mp4` 视频文件。
 
-纯 Python 标准库实现，**不需要安装任何第三方依赖**，也不需要 ffmpeg 就能完成提取。
+纯 Python 标准库实现，**不需要安装任何第三方依赖**。
 
 ## 背景
 
@@ -44,17 +44,6 @@ python extract.py "D:\path\to\package.mpkg" "D:\output"
 提取后，输出目录里除了原始文件（`wallpaper.mp4`、`project.json`、`scene.json`、
 `preview.gif`），还会额外复制一份 `封包名.mp4` 方便直接使用。
 
-## ffmpeg 有用吗？
-
-提取这一步**不需要** ffmpeg。不过如果你有 ffmpeg，可以：
-
-- 验证视频是否完整：`ffprobe -v error -show_entries format=duration,size output.mp4`
-- 重新压缩成更小的文件，例如压到 1080p：
-
-```bat
-ffmpeg -i output.mp4 -vf scale=-2:1080 -c:v libx264 -crf 23 -c:a copy output_1080p.mp4
-```
-
 ## 环境要求
 
 - Python 3.8+（仅使用标准库）
@@ -66,4 +55,4 @@ ffmpeg -i output.mp4 -vf scale=-2:1080 -c:v libx264 -crf 23 -c:a copy output_108
 文件头不是 `PKGM0014`，可能不是本工具支持的封包格式，或文件已损坏。
 
 **提取出的 mp4 很大怎么办？**
-4K / 60fps 的壁纸视频通常有几十 MB，这是正常的。可以用 ffmpeg 重新压缩（见上文）。
+4K / 60fps 的壁纸视频通常有几十 MB，这是正常的。
