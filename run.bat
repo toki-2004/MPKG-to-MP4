@@ -2,26 +2,22 @@
 setlocal
 cd /d "%~dp0"
 
-rem Prefer the bundled standalone exe; fall back to Python source.
-set "TOOL="
-if exist "%~dp0mpkg2mp4.exe" set "TOOL="%~dp0mpkg2mp4.exe""
-if not defined TOOL (
-    where python >nul 2>nul && set "TOOL=python extract.py"
+set "PYTHON_CMD="
+where python >nul 2>nul && set "PYTHON_CMD=python"
+if not defined PYTHON_CMD (
+    where py >nul 2>nul && set "PYTHON_CMD=py -3"
 )
-if not defined TOOL (
-    where py >nul 2>nul && set "TOOL=py -3 extract.py"
-)
-if not defined TOOL (
-    echo mpkg2mp4.exe not found and Python is not installed.
-    echo Please install Python from https://www.python.org/downloads/
-    echo and check "Add Python to PATH", or get mpkg2mp4.exe.
+if not defined PYTHON_CMD (
+    echo Python was not found. Please install it from:
+    echo https://www.python.org/downloads/
+    echo Make sure to check "Add Python to PATH" during installation.
     pause
     exit /b 1
 )
 
 rem Called with a file argument (e.g. dragged onto this .bat): extract once.
 if not "%~1"=="" (
-    %TOOL% %*
+    %PYTHON_CMD% extract.py %*
     echo.
     pause
     exit /b %errorlevel%
@@ -37,6 +33,6 @@ set /p "PKG=mpkg path: "
 set "PKG=%PKG:"=%"
 if /i "%PKG%"=="exit" exit /b 0
 if not defined PKG goto :loop
-%TOOL% "%PKG%"
+%PYTHON_CMD% extract.py "%PKG%"
 echo.
 goto :loop
