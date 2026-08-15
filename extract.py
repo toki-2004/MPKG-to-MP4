@@ -13,6 +13,13 @@ import argparse
 import os
 import sys
 
+try:
+    # Make console output resilient to non-UTF-8 system codepages.
+    sys.stdout.reconfigure(errors="replace")
+    sys.stderr.reconfigure(errors="replace")
+except Exception:
+    pass
+
 SIGNATURE = b"PKGM0014"
 HEADER_SIZE = 16  # 8-byte magic + version/count fields
 

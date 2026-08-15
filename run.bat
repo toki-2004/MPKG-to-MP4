@@ -1,6 +1,5 @@
 @echo off
 setlocal
-chcp 65001 >nul
 cd /d "%~dp0"
 
 set "PYTHON_CMD="
@@ -16,13 +15,24 @@ if not defined PYTHON_CMD (
     exit /b 1
 )
 
-if "%~1"=="" (
-    echo Usage: drag and drop a .mpkg file onto this window, or run:
-    echo   %PYTHON_CMD% extract.py ^<package.mpkg^> [output_dir]
+rem Called with a file argument (e.g. dragged onto this .bat): extract once.
+if not "%~1"=="" (
+    %PYTHON_CMD% extract.py %*
+    echo.
     pause
-    exit /b 0
+    exit /b %errorlevel%
 )
 
-%PYTHON_CMD% extract.py %*
+rem Interactive mode: keep waiting for files dragged into the window.
+:loop
 echo.
-pause
+echo Drag a .mpkg file onto this window and press Enter.
+echo Or type the full path of the .mpkg file. Type exit to quit.
+set "PKG="
+set /p "PKG=mpkg path: "
+set "PKG=%PKG:"=%"
+if /i "%PKG%"=="exit" exit /b 0
+if not defined PKG goto :loop
+%PYTHON_CMD% extract.py "%PKG%"
+echo.
+goto :loop
