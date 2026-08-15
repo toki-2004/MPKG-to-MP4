@@ -2,6 +2,9 @@
 setlocal
 cd /d "%~dp0"
 
+rem Let extract.py skip its own end-of-run pause (run.bat handles it).
+set "MPKG2MP4_NO_PAUSE=1"
+
 set "PYTHON_CMD="
 where python >nul 2>nul && set "PYTHON_CMD=python"
 if not defined PYTHON_CMD (

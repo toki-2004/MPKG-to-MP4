@@ -37,7 +37,8 @@ Wallpaper Engine 的 `.mpkg` 封包，文件头是 `PKGM0014`。它并不是一�
 
 也可以把 `.mpkg` 文件直接拖到 `run.bat` 图标上，处理完一个后自动退出。
 不想安装 Python 的话，请从 [Releases](https://github.com/toki-2004/MPKG-to-MP4/releases)
-下载免安装版 `mpkg2mp4.exe`。
+下载免安装版 `mpkg2mp4.exe`：双击 exe 会直接打开交互窗口，把 `.mpkg` 文件拖入窗口
+回车即可提取；也可以把 `.mpkg` 文件拖到 exe 图标上，提取完成后按回车退出。
 
 ### 方式二：命令行
 

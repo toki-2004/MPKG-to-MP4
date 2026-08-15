@@ -7,6 +7,9 @@ Pure Python standard library, no third-party dependencies required.
 
 Usage:
     python extract.py <package.mpkg> [output_dir]
+
+Run without arguments to enter interactive mode:
+    python extract.py
 """
 
 import argparse
@@ -89,11 +92,62 @@ def extract(pkg_path, out_dir):
     return results
 
 
+def default_out_dir(pkg_path):
+    stem = os.path.splitext(os.path.basename(pkg_path))[0]
+    return os.path.join(os.path.dirname(os.path.abspath(pkg_path)), stem + "_extracted")
+
+
+def run_extract(pkg_path, out_dir):
+    """Extract one package and print a summary. Returns True on success."""
+    if not os.path.isfile(pkg_path):
+        print("Error: file not found: {}".format(pkg_path))
+        return False
+
+    try:
+        results = extract(pkg_path, out_dir)
+    except PkgError as exc:
+        print("Error: {}".format(exc))
+        return False
+    except OSError as exc:
+        print("Error: {}".format(exc))
+        return False
+
+    print("Extracted {} file(s) -> {}".format(len(results), out_dir))
+    for name, size, dst in results:
+        print("  {:<24} {:>12,} bytes  -> {}".format(name, size, dst))
+    return True
+
+
+def interactive_loop():
+    """No package given: keep reading .mpkg paths from stdin until exit/EOF."""
+    if sys.stdin.isatty():
+        print("Drag a .mpkg file onto this window and press Enter.")
+        print("Or type the full path of the .mpkg file. Type exit to quit.")
+    while True:
+        try:
+            line = sys.stdin.readline()
+        except KeyboardInterrupt:
+            print()
+            return 0
+        if not line:
+            return 0
+        pkg_path = line.strip().strip('"')
+        if not pkg_path:
+            continue
+        if pkg_path.lower() == "exit":
+            return 0
+        run_extract(pkg_path, default_out_dir(pkg_path))
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Extract videos and files from Wallpaper Engine .mpkg packages"
     )
-    parser.add_argument("pkg", help="path to the .mpkg package")
+    parser.add_argument(
+        "pkg",
+        nargs="?",
+        help="path to the .mpkg package (omit to enter interactive mode)",
+    )
     parser.add_argument(
         "out",
         nargs="?",
@@ -102,30 +156,19 @@ def main(argv=None):
     )
     args = parser.parse_args(argv)
 
-    pkg_path = args.pkg
-    if not os.path.isfile(pkg_path):
-        print("Error: file not found: {}".format(pkg_path))
-        return 1
+    if not args.pkg:
+        return interactive_loop()
 
-    if args.out:
-        out_dir = args.out
-    else:
-        stem = os.path.splitext(os.path.basename(pkg_path))[0]
-        out_dir = os.path.join(os.path.dirname(os.path.abspath(pkg_path)), stem + "_extracted")
+    out_dir = args.out or default_out_dir(args.pkg)
+    ok = run_extract(args.pkg, out_dir)
 
-    try:
-        results = extract(pkg_path, out_dir)
-    except PkgError as exc:
-        print("Error: {}".format(exc))
-        return 1
-    except OSError as exc:
-        print("Error: {}".format(exc))
-        return 1
-
-    print("Extracted {} file(s) -> {}".format(len(results), out_dir))
-    for name, size, dst in results:
-        print("  {:<24} {:>12,} bytes  -> {}".format(name, size, dst))
-    return 0
+    # Keep the window open when launched by double-click / drag-and-drop.
+    if sys.stdout.isatty() and os.environ.get("MPKG2MP4_NO_PAUSE") != "1":
+        try:
+            input("Press Enter to exit...")
+        except (EOFError, KeyboardInterrupt):
+            pass
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":
