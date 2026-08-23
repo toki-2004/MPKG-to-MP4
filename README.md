@@ -15,7 +15,7 @@ Wallpaper Engine 的 `.mpkg` 封包，文件头是 `PKGM0014`。它并不是一�
 
 ### 如何获取 .mpkg 文件
 
-右键订阅的壁纸 → 发送至移动设备 → 导出 `.mpkg`，即可获取该壁纸的 mpkg 文件。
+右键订阅的壁纸 → 发送至移动设备 → 导出 `.mpkg`，选择预渲染，相关设置可自行调整，即可获取该壁纸的 mpkg 文件。
 
 ### 封包格式（供参考）
 
@@ -31,14 +31,15 @@ Wallpaper Engine 的 `.mpkg` 封包，文件头是 `PKGM0014`。它并不是一�
 ### 方式一：拖拽（Windows）
 
 1. 双击运行 `run.bat`（本机需装有 Python）。
+
+   不想安装 Python 的话，请从 [Releases](https://github.com/toki-2004/MPKG-to-MP4/releases)
+   下载免安装版 `mpkg2mp4.exe`：双击 exe 会直接打开交互窗口，把 `.mpkg` 文件拖入窗口
+   回车即可提取；也可以把 `.mpkg` 文件拖到 exe 图标上，提取完成后按回车退出。
 2. 窗口会出现 `mpkg path:` 输入提示，把 `.mpkg` 文件直接拖进窗口，回车。
 3. 提取完成后可以继续拖入下一个文件；输入 `exit` 回车即可退出。
 4. 提取结果输出到封包旁边的 `<封包名>_extracted` 文件夹。
 
 也可以把 `.mpkg` 文件直接拖到 `run.bat` 图标上，处理完一个后自动退出。
-不想安装 Python 的话，请从 [Releases](https://github.com/toki-2004/MPKG-to-MP4/releases)
-下载免安装版 `mpkg2mp4.exe`：双击 exe 会直接打开交互窗口，把 `.mpkg` 文件拖入窗口
-回车即可提取；也可以把 `.mpkg` 文件拖到 exe 图标上，提取完成后按回车退出。
 
 ### 方式二：命令行
 
