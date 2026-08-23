@@ -5,7 +5,7 @@
 源码仅使用 Python 标准库，无第三方依赖；无需安装 Python 的用户可从
 [Releases](https://github.com/toki-2004/MPKG-to-MP4/releases) 下载免安装版 `mpkg2mp4.exe`。
 
-## 背景
+![拖拽提取演示](assets/drag-extract.gif)
 
 Wallpaper Engine 的 `.mpkg` 封包，文件头是 `PKGM0014`。它并不是一种视频格式，
 而是一个自定义容器：里面装着 `wallpaper.mp4`（视频本体）、
@@ -13,7 +13,7 @@ Wallpaper Engine 的 `.mpkg` 封包，文件头是 `PKGM0014`。它并不是一�
 
 因此“转成 mp4”本质上并非转码，而是**从封包中提取其中的 mp4 文件**。
 
-### 如何获取 .mpkg 文件
+![解包前后对比](assets/before-after.png)
 
 右键订阅的壁纸 → 发送至移动设备 → 导出 `.mpkg`，选择预渲染，相关设置可自行调整，即可获取该壁纸的 mpkg 文件。
 
@@ -66,7 +66,7 @@ python extract.py "D:\pythonitems\3590728775.mpkg" "D:\output"
 提取完成后，输出目录中除原始文件（`wallpaper.mp4`、`project.json`、`scene.json`、
 `preview.gif`）外，还会额外生成一份 `封包名.mp4`，便于直接使用。
 
-## 环境要求
+![命令行使用](assets/cli.png)
 
 - Windows：`run.bat` 需要本机装有 Python；免安装版 `mpkg2mp4.exe` 可从
   [Releases](https://github.com/toki-2004/MPKG-to-MP4/releases) 下载
