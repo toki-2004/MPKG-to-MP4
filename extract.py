@@ -12,6 +12,7 @@ Run without arguments to enter interactive mode:
     python extract.py
 """
 
+import re
 import argparse
 import os
 import sys
@@ -70,6 +71,43 @@ def parse_pkg(path):
     return entries
 
 
+def sanitize_entry_name(name):
+    """Normalize a package entry name and make sure it cannot escape out_dir.
+
+    Entry names come from the package file itself (untrusted input: packages
+    are third-party Workshop downloads), so a name like '..\\..\\x.mp4' or an
+    absolute path must never be written through os.path.join as-is (Zip-Slip).
+    Returns a relative, normalized name or None if the entry is unsafe.
+    """
+    name = name.replace("\\", "/").strip().lstrip("/")
+    if not name or re.match(r"^[A-Za-z]:", name):
+        return None  # absolute path / drive letter
+    parts = []
+    for part in name.split("/"):
+        if part in ("", "."):
+            continue
+        if part == "..":
+            return None  # parent traversal
+        # strip Windows-illegal characters per path segment
+        part = re.sub(r'[<>:"|?*\x00-\x1f]', "_", part)
+        # reserved device names (CON, NUL, COM1, ...) would write nowhere useful
+        if re.match(r"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\..*)?$", part, re.I):
+            return None
+        parts.append(part)
+    if not parts:
+        return None
+    return os.path.join(*parts)
+
+
+def safe_join(out_dir, rel_name):
+    """Join and verify the result stays inside out_dir (final backstop)."""
+    dst = os.path.abspath(os.path.join(out_dir, rel_name))
+    base = os.path.abspath(out_dir)
+    if os.path.commonpath([dst, base]) != base:
+        raise PkgError("Entry path escapes the output directory: " + rel_name)
+    return dst
+
+
 def extract(pkg_path, out_dir):
     """Extract all files from a package; MP4 files are also copied to the top level."""
     entries = parse_pkg(pkg_path)
@@ -78,7 +116,14 @@ def extract(pkg_path, out_dir):
     stem = os.path.splitext(os.path.basename(pkg_path))[0]
 
     for entry in entries:
-        dst = os.path.join(out_dir, entry["name"])
+        rel = sanitize_entry_name(entry["name"])
+        if rel is None:
+            print("Warning: skipped unsafe entry name: {!r}".format(entry["name"]))
+            continue
+        dst = safe_join(out_dir, rel)
+        parent = os.path.dirname(dst)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
         with open(dst, "wb") as f:
             f.write(entry["data"])
         results.append((entry["name"], len(entry["data"]), dst))
