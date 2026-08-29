@@ -1,5 +1,7 @@
 # MPKG to MP4
 
+> **语言：** 简体中文 | [English](README.en.md)
+
 把 Wallpaper Engine 的 `.mpkg` 封包解包，直接提取出里面的 `wallpaper.mp4` 视频文件。
 
 源码仅使用 Python 标准库，无第三方依赖；无需安装 Python 的用户可从
